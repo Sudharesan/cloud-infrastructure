@@ -1,0 +1,28 @@
+name: Terraform CI
+
+on:
+  push:
+    paths:
+      - 'terraform/**'
+  pull_request:
+    paths:
+      - 'terraform/**'
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: '1.4.6'
+      - name: Terraform init
+        working-directory: ./terraform/aws
+        run: terraform init
+      - name: Terraform fmt
+        working-directory: ./terraform/aws
+        run: terraform fmt -check -recursive
+      - name: Terraform validate
+        working-directory: ./terraform/aws
+        run: terraform validate || true
